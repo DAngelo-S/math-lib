@@ -1,0 +1,19 @@
+[project]
+name = "math-undie"
+version = "0.0.12"
+authors = [
+    { name = "Débora D'Angelo Reina de Araujo", email = "dangelo.dra@gmail.com" }
+]
+description = "A package for study undergraduate math concepts"
+readme = "README.md"
+requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "CC-BY-4.0"
+license-files = ["LICENSE"]
+
+[project.urls]
+Homepage = "https://github.com/DAngelo-S/math-lib"
+Issues = "https://github.com/DAngelo-S/math-lib/issues"
