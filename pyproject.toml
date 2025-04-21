@@ -1,6 +1,6 @@
 [project]
 name = "math-undie"
-version = "0.0.12"
+version = "0.0.15"
 authors = [
     { name = "Débora D'Angelo Reina de Araujo", email = "dangelo.dra@gmail.com" }
 ]
@@ -17,3 +17,13 @@ license-files = ["LICENSE"]
 [project.urls]
 Homepage = "https://github.com/DAngelo-S/math-lib"
 Issues = "https://github.com/DAngelo-S/math-lib/issues"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
