@@ -1,8 +1,9 @@
-from .error import MatricesWithDifferentDimensionsException, InvalidDimensionsForMultiplyingColumns, InvalidTypeException, NotANumberException
+from .error import MatrixsWithDifferentDimensionsException, InvalidDimensionsForMultiplyingColumnsException, InvalidTypeException
+from .scalar import Scalar
 
-class Matrice:
-    def __init__(self, matrice):
-        self.value = matrice
+class Matrix:
+    def __init__(self, matrix):
+        self.value = matrix
 
     def __str__(self):
         string_matrix = [[str(elem) for elem in row] for row in self.value]
@@ -15,18 +16,18 @@ class Matrice:
     
     def __add__(self, other):
         if self.get_shape() != other.get_shape():
-            raise MatricesWithDifferentDimensionsException()
+            raise MatrixsWithDifferentDimensionsException()
         
-        return Matrice([[a + b for a, b in zip(rowa, rowb)] for rowa, rowb in zip(self.value, other.value)])
+        return Matrix([[a + b for a, b in zip(rowa, rowb)] for rowa, rowb in zip(self.value, other.value)])
 
     def __iadd__(self, other):
         return self + other
 
     def __sub__(self, other):
         if self.get_shape() != other.get_shape():
-            raise MatricesWithDifferentDimensionsException()
+            raise MatrixsWithDifferentDimensionsException()
         
-        return Matrice([[a - b for a, b in zip(rowa, rowb)] for rowa, rowb in zip(self.value, other.value)])
+        return Matrix([[a - b for a, b in zip(rowa, rowb)] for rowa, rowb in zip(self.value, other.value)])
     
     def __isub__(self, other):
         return self - other
@@ -42,11 +43,11 @@ class Matrice:
 
     def __mul__(self, other):
         if isinstance(other, Scalar):
-            return Matrice([[other.value * a for a in row] for row in self.value])
+            return Matrix([[other.value * a for a in row] for row in self.value])
         
-        elif isinstance(other, Matrice):
+        elif isinstance(other, Matrix):
             if self.get_shape()[1] != other.get_shape()[0]:
-                raise InvalidDimensionsForMultiplyingColumns()
+                raise InvalidDimensionsForMultiplyingColumnsException()
             result = []
 
             m, n = self.get_shape()[0], other.get_shape()[1]
@@ -58,7 +59,7 @@ class Matrice:
                     row.append(sum([a * b for a, b in zip(a_row, b_col)]))
                 result.append(row)
             
-            return Matrice(result)
+            return Matrix(result)
         
         else:
             raise InvalidTypeException()
@@ -74,7 +75,7 @@ class Matrice:
 
     def __pow__(self, other):
         if self.get_shape()[1] != self.get_shape()[0]:
-            raise InvalidDimensionsForMultiplyingColumns()
+            raise InvalidDimensionsForMultiplyingColumnsException()
         
         if not isinstance(other, int) or other < 0:
             raise InvalidTypeException()
@@ -116,7 +117,7 @@ class Matrice:
         for j in range(len(self.value[0])):
             result.append(self.get_jth_column(j))
 
-        return Matrice(result)
+        return Matrix(result)
     
     def get_neutral_element(self):
         m, n = self.get_shape()
@@ -125,7 +126,7 @@ class Matrice:
         for i in range(m):
             result.append([0] * n)
         
-        return Matrice(result)
+        return Matrix(result)
     
 def get_identity(size):
     result = []
@@ -139,56 +140,32 @@ def get_identity(size):
                 row.append(0)
         result.append(row)
         
-    return Matrice(result)
-            
-
-class Scalar():
-    def __init__(self, v):
-        if not isinstance(v, int) and not isinstance(v, float):
-            raise NotANumberException()
-
-        self.value = v
-    
-    def __mul__(self, other):
-        if isinstance(other, Matrice):
-            return other * self
-        
-        elif isinstance(other, Scalar):
-            return Scalar(self.value * other.value)
-        
-        else:
-            raise InvalidTypeException()
-        
-    def __add__(self, other):
-        return Scalar(self.value + other.value)
-
-    def __sub__(self, other):
-        return Scalar(self.value - other.value)
+    return Matrix(result)
     
 if __name__ == "__main__":
-    A = Matrice([[1, 2, -3], [3, 4, 0]])
-    A_t = Matrice([[1, 3], [2, 4], [-3, 0]])
-    B = Matrice([[-2, 1, 5], [0, 3, -4]])
-    C = Matrice([[-1, 3, 2], [3, 7, -4]])
-    D = Matrice([[3, 1, -8], [3, 1, 4]])
-    E = Matrice([[2, 4, -6], [6, 8, 0]])
-    F = Matrice([[-17, 19, 0], [-6, 15, 0]])
-    G = Matrice([[1, 2, -3], [3, 4, 0]])
-    H = Matrice([[-2, 1, 0], [0, 3, 0], [5, -4, 0]])
+    A = Matrix([[1, 2, -3], [3, 4, 0]])
+    A_t = Matrix([[1, 3], [2, 4], [-3, 0]])
+    B = Matrix([[-2, 1, 5], [0, 3, -4]])
+    C = Matrix([[-1, 3, 2], [3, 7, -4]])
+    D = Matrix([[3, 1, -8], [3, 1, 4]])
+    E = Matrix([[2, 4, -6], [6, 8, 0]])
+    F = Matrix([[-17, 19, 0], [-6, 15, 0]])
+    G = Matrix([[1, 2, -3], [3, 4, 0]])
+    H = Matrix([[-2, 1, 0], [0, 3, 0], [5, -4, 0]])
     I = H * Scalar(5)
 
     assert A != B, "A different than B"
-    assert A + B == C, "sum two matrices"
-    assert A - B == D, "subtract two matrices"
-    assert A * Scalar(2) == E, "multiply matrice and scalar"
-    assert Scalar(2) * A == E, "multiply scalar and matrice"
-    assert G * H == F, "multiplying two matrices"
+    assert A + B == C, "sum two Matrixs"
+    assert A - B == D, "subtract two Matrixs"
+    assert A * Scalar(2) == E, "multiply Matrix and scalar"
+    assert Scalar(2) * A == E, "multiply scalar and Matrix"
+    assert G * H == F, "multiplying two Matrixs"
     try:
         H * G
         assert False, "Expected an error for invalid dimesions"
-    except InvalidDimensionsForMultiplyingColumns as e:
+    except InvalidDimensionsForMultiplyingColumnsException as e:
         assert True
-    assert A_t == A.transpose() == ~A, "transposed matrice"
+    assert A_t == A.transpose() == ~A, "transposed Matrix"
 
     ### properties ###
 

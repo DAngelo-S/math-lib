@@ -1,18 +1,19 @@
 import unittest
-from src.matrix.matrix import Matrice, Scalar, get_identity
-from src.matrix.error import InvalidDimensionsForMultiplyingColumns
+from matrix import Matrix, get_identity
+from matrix import Scalar
+from matrix.error import InvalidDimensionsForMultiplyingColumnsException
 
-class TestMatriceOperations(unittest.TestCase):
+class TestMatrixOperations(unittest.TestCase):
     def setUp(self):
-        self.A = Matrice([[1, 2, -3], [3, 4, 0]])
-        self.A_t = Matrice([[1, 3], [2, 4], [-3, 0]])
-        self.B = Matrice([[-2, 1, 5], [0, 3, -4]])
-        self.C = Matrice([[-1, 3, 2], [3, 7, -4]])
-        self.D = Matrice([[3, 1, -8], [3, 1, 4]])
-        self.E = Matrice([[2, 4, -6], [6, 8, 0]])
-        self.F = Matrice([[-17, 19, 0], [-6, 15, 0]])
-        self.G = Matrice([[1, 2, -3], [3, 4, 0]])
-        self.H = Matrice([[-2, 1, 0], [0, 3, 0], [5, -4, 0]])
+        self.A = Matrix([[1, 2, -3], [3, 4, 0]])
+        self.A_t = Matrix([[1, 3], [2, 4], [-3, 0]])
+        self.B = Matrix([[-2, 1, 5], [0, 3, -4]])
+        self.C = Matrix([[-1, 3, 2], [3, 7, -4]])
+        self.D = Matrix([[3, 1, -8], [3, 1, 4]])
+        self.E = Matrix([[2, 4, -6], [6, 8, 0]])
+        self.F = Matrix([[-17, 19, 0], [-6, 15, 0]])
+        self.G = Matrix([[1, 2, -3], [3, 4, 0]])
+        self.H = Matrix([[-2, 1, 0], [0, 3, 0], [5, -4, 0]])
         self.I = self.H * Scalar(5)
 
     def test_basic_operations(self):
@@ -22,7 +23,7 @@ class TestMatriceOperations(unittest.TestCase):
         self.assertEqual(self.A * Scalar(2), self.E)
         self.assertEqual(Scalar(2) * self.A, self.E)
         self.assertEqual(self.G * self.H, self.F)
-        with self.assertRaises(InvalidDimensionsForMultiplyingColumns):
+        with self.assertRaises(InvalidDimensionsForMultiplyingColumnsException):
             self.H * self.G
         self.assertEqual(self.A_t, self.A.transpose())
         self.assertEqual(~self.A, self.A.transpose())

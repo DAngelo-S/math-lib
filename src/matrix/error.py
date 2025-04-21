@@ -1,12 +1,12 @@
-class MatricesWithDifferentDimensionsException(Exception):
+class MatrixsWithDifferentDimensionsException(Exception):
     def __init__(self):
-        super().__init__("Matrices with different dimensions")
+        super().__init__("Matrixs with different dimensions")
 
 class NotANumberException(Exception):
     def __init__(self):
         super().__init__("Not a number.")
 
-class InvalidDimensionsForMultiplyingColumns(Exception):
+class InvalidDimensionsForMultiplyingColumnsException(Exception):
     def __init__(self):
         super().__init__("Invalid dimensions for multiplying columns")
 
