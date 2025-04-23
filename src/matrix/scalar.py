@@ -8,11 +8,11 @@ class Scalar():
         self.value = v
     
     def __mul__(self, other):
-        from .matrix import Matrix
+        from matrix import Matrix
         if isinstance(other, Matrix):
             return other * self
         
-        elif isinstance(other, Scalar):
+        elif isinstance(other, type(Scalar(0))):
             return Scalar(self.value * other.value)
         
         else:

@@ -1,5 +1,5 @@
-from .error import MatrixsWithDifferentDimensionsException, InvalidDimensionsForMultiplyingColumnsException, InvalidTypeException
-from .scalar import Scalar
+from matrix.error import MatrixsWithDifferentDimensionsException, InvalidDimensionsForMultiplyingColumnsException, InvalidTypeException
+from matrix.scalar import Scalar
 
 class Matrix:
     def __init__(self, matrix):
@@ -128,6 +128,17 @@ class Matrix:
         
         return Matrix(result)
     
+    def is_scalar_multiple(self, other):
+        try:
+            x = Scalar(self.value[0][0] / other.value[0][0])
+
+            return x * other == self
+        except ZeroDivisionError:
+            return False
+        except:
+            raise
+
+
 def get_identity(size):
     result = []
 
@@ -141,70 +152,3 @@ def get_identity(size):
         result.append(row)
         
     return Matrix(result)
-    
-if __name__ == "__main__":
-    A = Matrix([[1, 2, -3], [3, 4, 0]])
-    A_t = Matrix([[1, 3], [2, 4], [-3, 0]])
-    B = Matrix([[-2, 1, 5], [0, 3, -4]])
-    C = Matrix([[-1, 3, 2], [3, 7, -4]])
-    D = Matrix([[3, 1, -8], [3, 1, 4]])
-    E = Matrix([[2, 4, -6], [6, 8, 0]])
-    F = Matrix([[-17, 19, 0], [-6, 15, 0]])
-    G = Matrix([[1, 2, -3], [3, 4, 0]])
-    H = Matrix([[-2, 1, 0], [0, 3, 0], [5, -4, 0]])
-    I = H * Scalar(5)
-
-    assert A != B, "A different than B"
-    assert A + B == C, "sum two Matrixs"
-    assert A - B == D, "subtract two Matrixs"
-    assert A * Scalar(2) == E, "multiply Matrix and scalar"
-    assert Scalar(2) * A == E, "multiply scalar and Matrix"
-    assert G * H == F, "multiplying two Matrixs"
-    try:
-        H * G
-        assert False, "Expected an error for invalid dimesions"
-    except InvalidDimensionsForMultiplyingColumnsException as e:
-        assert True
-    assert A_t == A.transpose() == ~A, "transposed Matrix"
-
-    ### properties ###
-
-    # comutatividade
-    assert A + B == B + A
-    # associatividade
-    assert A + (B + C) == (A + B) + C
-    # elemento neutro
-    Z = A.get_neutral_element()
-    assert A + Z == A
-    # elemento simétrico
-    assert A + (-A) == Z
-    # associatividade 
-    assert Scalar(3) * (Scalar(5) * A) == (Scalar(3) * Scalar(5)) * A
-    # distributividade
-    assert Scalar(7) * (A + B) == Scalar(7) * A + Scalar(7) * B
-    # distributividade
-    assert (Scalar(11) + Scalar(13)) * A == Scalar(11) * A + Scalar(13) * A
-    # associatividade
-    assert G * (H * I) == (G * H) * I
-    # elemento neutro
-    Im = get_identity(A.get_shape()[0])
-    In = get_identity(A.get_shape()[1])
-    assert A * In == Im * A == A
-    # distributividade
-    assert G * (H + I) == G * H + G * I
-    assert (G + E) * H == G * H + E * H
-    assert Scalar(7) * (G * H) == (Scalar(7) * G) * H == G * (Scalar(7) * H)
-    assert ~~A == A
-    assert ~(A + B) == ~A + ~B
-    assert ~(Scalar(7) * A) == Scalar(7) * ~A
-    assert ~(G * H) == ~H * ~G
-
-    # potencializaçao
-    assert H ** 0 == get_identity(H.get_shape()[0])
-    assert H ** 1 == H
-    assert H ** 2 == H * H
-    assert H ** 3 == H * H * H
-
-    # produtos notaveis
-    assert (H + I) * (H - I) == H ** 2 - I ** 2
-    assert (H + I) ** 2 == H ** 2 + Scalar(2) * H * I + I ** 2

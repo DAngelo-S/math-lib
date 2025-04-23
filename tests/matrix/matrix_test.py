@@ -65,5 +65,13 @@ class TestMatrixOperations(unittest.TestCase):
         self.assertEqual((self.H + self.I) * (self.H - self.I), self.H ** 2 - self.I ** 2)
         self.assertEqual((self.H + self.I) ** 2, self.H ** 2 + Scalar(2) * self.H * self.I + self.I ** 2)
 
+    def test_if_A_matrix_is_scalar_multiple_of_B(self):
+        self.assertFalse(self.A.is_scalar_multiple(self.B))
+        self.assertTrue(self.H.is_scalar_multiple(self.I))
+        self.assertTrue(self.I.is_scalar_multiple(self.H))
+        Z = self.H.get_neutral_element()
+        self.assertFalse(self.H.is_scalar_multiple(Z))
+        self.assertTrue(Z.is_scalar_multiple(self.H))
+
 if __name__ == '__main__':
     unittest.main()
