@@ -1,19 +1,12 @@
 VENV_PATH = .venv
-PIP = $(VENV_PATH)/bin/pip3
-PYTHON = $(VENV_PATH)/bin/python3
+PIP = pip3
+PYTHON = python3
 PACKAGE_NAME = math_undie
 DIST_DIR = dist
 
 .DEFAULT_GOAL := build
 
 .PHONY: test build setup clear help upload update req
-
-# Regra para criar o venv se não existir
-$(VENV_PATH):
-	python3 -m venv $(VENV_PATH)
-
-# Instala dependências
-deps: $(VENV_PATH)
 
 help:
 	@echo "Makefile para gerenciamento de pacotes Python"
@@ -25,21 +18,22 @@ help:
 	@echo "  make clear       # Remove artefatos antigos de build"
 
 clear:
-	rm -rf $(DIST_DIR) ./**/*.egg-info
+	rm -rf $(DIST_DIR) ./**/*.egg-info ./**/__pycache__ ./**/**/__pycache__
 	@echo "Old build artifacts removed."
 
-setup: $(VENV_PATH)
-	@. $(VENV_PATH)/bin/activate && pip install --upgrade pip --break-system-packages
-	@. $(VENV_PATH)/bin/activate && pip3 install -r requirements --break-system-packages
+setup:
+	@. .venv/bin/activate && pip3 install --upgrade pip --break-system-packages
+	@. .venv/bin/activate && pip3 install -r requirements --break-system-packages
 
-build: setup
-	python3 -m build && $(MAKE) test
+
+build:
+	PYTHONPATH=src python3 -m build && $(MAKE) test
 
 upload: clear
 	$(MAKE) build
 	python3 -m twine upload --repository testpypi $(DIST_DIR)/* --verbose --config-file .pypirc
 	@echo "Package uploaded to TestPyPI."
-	$(MAKE) req
+	$(MAKE) req_update
 
 update:
 	$(eval CURRENT_VERSION = $(shell grep -o 'version = ".*"' pyproject.toml | awk -F'= "' '{print $$2}' | sed 's/"$$//'))
@@ -56,4 +50,7 @@ req_update:
 	@echo "requirements atualizado."
 
 test:
-	@python3 -m unittest discover -s tests -p '*.py' -v
+	@PYTHONPATH=src python3 -m unittest discover -s tests/* -p '*.py' -v
+
+exercises:
+	@PYTHONPATH=src python3 -m unittest discover -s book-exercises/* -p '*.py' -v
