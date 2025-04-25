@@ -1,5 +1,5 @@
 import unittest
-from matrix import Matrix, get_identity
+from matrix import Matrix, get_identity, get_neutral_element
 from matrix import Scalar
 from matrix.error import InvalidDimensionsForMultiplyingColumnsException
 
@@ -29,7 +29,8 @@ class TestMatrixOperations(unittest.TestCase):
         self.assertEqual(~self.A, self.A.transpose())
 
     def test_properties(self):
-        Z = self.A.get_neutral_element()
+        m, n = self.A.get_shape()
+        Z = get_neutral_element(m, n)
         self.assertEqual(self.A + self.B, self.B + self.A)
         self.assertEqual(self.A + (self.B + self.C), (self.A + self.B) + self.C)
         self.assertEqual(self.A + Z, self.A)
@@ -69,7 +70,8 @@ class TestMatrixOperations(unittest.TestCase):
         self.assertFalse(self.A.is_scalar_multiple(self.B))
         self.assertTrue(self.H.is_scalar_multiple(self.I))
         self.assertTrue(self.I.is_scalar_multiple(self.H))
-        Z = self.H.get_neutral_element()
+        m, n = self.H.get_shape()
+        Z = get_neutral_element(m, n)
         self.assertFalse(self.H.is_scalar_multiple(Z))
         self.assertTrue(Z.is_scalar_multiple(self.H))
 

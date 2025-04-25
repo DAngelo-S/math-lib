@@ -1,0 +1,34 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "🧪 Rodar teste atual",
+        "type": "python",
+        "request": "launch",
+        "program": "${file}",
+        "console": "integratedTerminal",
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },
+      {
+        "name": "🧪 Descobrir e rodar todos os testes",
+        "type": "python",
+        "request": "launch",
+        "module": "unittest",
+        "args": [
+          "discover",
+          "-s",
+          "tests",
+          "-p",
+          "*.py",
+          "-v"
+        ],
+        "console": "integratedTerminal",
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      }
+    ]
+  }
+  

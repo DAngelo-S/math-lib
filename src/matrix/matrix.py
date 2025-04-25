@@ -119,15 +119,6 @@ class Matrix:
 
         return Matrix(result)
     
-    def get_neutral_element(self):
-        m, n = self.get_shape()
-
-        result = []
-        for i in range(m):
-            result.append([0] * n)
-        
-        return Matrix(result)
-    
     def is_scalar_multiple(self, other):
         try:
             x = Scalar(self.value[0][0] / other.value[0][0])
@@ -151,4 +142,11 @@ def get_identity(size):
                 row.append(0)
         result.append(row)
         
+    return Matrix(result)
+
+def get_neutral_element(m, n):
+    result = []
+    for i in range(m):
+        result.append([0] * n)
+    
     return Matrix(result)
