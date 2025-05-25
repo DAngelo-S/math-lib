@@ -50,7 +50,13 @@ req_update:
 	@echo "requirements atualizado."
 
 test:
-	@PYTHONPATH=src python3 -m unittest discover -s tests/* -p '*.py' -v
+	@PYTHONPATH=src python3 -m unittest discover -s tests/ -p '*.py' -v
+
+test_matrix:
+	@PYTHONPATH=src python3 -m unittest discover -s tests/ -p 'matrix_test.py' -v
+
+test_linear_system:
+	@PYTHONPATH=src python3 -m unittest discover -s tests/ -p 'linear_system_test.py' -v
 
 exercises:
 	@PYTHONPATH=src python3 -m unittest discover -s book-exercises/* -p '*.py' -v
