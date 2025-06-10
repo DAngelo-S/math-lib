@@ -75,5 +75,105 @@ class TestMatrixOperations(unittest.TestCase):
         self.assertFalse(self.H.is_scalar_multiple(Z))
         self.assertTrue(Z.is_scalar_multiple(self.H))
 
+    def test_if_line_is_null(self):
+        B = Matrix([[0, 2, -3], [0, 0, 0]])
+        self.assertTrue(B.line_is_null(1))
+        self.assertFalse(B.line_is_null(0))
+
+    def test_get_pivot_idx(self):
+        A = Matrix([[1, 2, -3], [3, 4, 0]])
+        B = Matrix([[0, 2, -3], [0, 0, 0]])
+        
+        self.assertEqual(A.get_pivot_idx(0), 0)
+        self.assertEqual(A.get_pivot_idx(1), 0)
+        self.assertEqual(B.get_pivot_idx(0), 1)
+        self.assertEqual(B.get_pivot_idx(1), float('inf'))
+
+    def test_get_indexed_pivots_by_row(self):
+        B = Matrix([[0, 0, 0], [1, 2, 3], [0, 2, -3], [0, 0, 0]])
+
+        self.assertEqual(B.get_indexed_pivots_by_row(), [(float('inf'), 0), (0, 1), (1, 2), (float('inf'), 3)])
+
+    def test_get_every_pivot_is_one(self):
+        B = Matrix([[0, 0, 0], [1, 2, 3], [0, 2, -3], [0, 0, 0]])
+        C = Matrix([[1, 0, 0], [0, 1, 3], [0, 0, 1], [0, 0, 0]])
+
+        self.assertFalse(B.every_pivot_is_one())
+        self.assertTrue(C.every_pivot_is_one())
+
+    def test_pivot_are_ordered(self):
+        B = Matrix([[0, 0, 0], [1, 2, 3], [0, 2, -3], [1, 0, 0]])
+        C = Matrix([[0, 0, 0], [1, 0, 0], [0, 1, 3], [0, 0, 1], [0, 0, 0]])
+
+        self.assertFalse(B.pivot_are_ordered())
+        self.assertTrue(C.pivot_are_ordered())
+
+    def test_every_column_is_null_except_for_pivot(self):
+        B = Matrix([[0, 0, 0], [1, 2, 3], [0, 2, -3], [1, 0, 0]])
+        C = Matrix([[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1], [0, 0, 0]])
+
+        self.assertFalse(B.every_column_is_null_except_for_pivot())
+        self.assertTrue(C.every_column_is_null_except_for_pivot())
+
+    def test_if_matrix_is_reduced_echelon(self):
+        A = Matrix([[1, 0, 0, 3], [0, 1, 0, -2], [0, 0, 1, 5]])
+        B = Matrix([[1, 3, 0, 2], [0, 0, 1, -3], [0, 0, 0, 0]])
+        C = Matrix([[1, 3, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+        D = Matrix([[1, 1, 1], [0, -1, 2], [0, 0, 5]])
+        E = Matrix([[1, 3, -1, 5], [0, 0, -5, 15], [0, 0, 0, 0]])
+
+        self.assertTrue(A.is_reduced_echelon())
+        self.assertTrue(B.is_reduced_echelon())
+        self.assertTrue(C.is_reduced_echelon())
+        self.assertFalse(D.is_reduced_echelon())
+        self.assertFalse(E.is_reduced_echelon())
+
+    def test_if_matrix_is_reduced_echelon(self):
+        A = Matrix([[1, 0, 0, 3], [0, 1, 0, -2], [0, 0, 1, 5]])
+        B = Matrix([[1, 3, 0, 2], [0, 0, 1, -3], [0, 0, 0, 0]])
+        C = Matrix([[1, 3, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+        D = Matrix([[1, 1, 1], [0, -1, 2], [0, 0, 5]])
+        E = Matrix([[1, 3, -1, 5], [0, 0, -5, 15], [0, 0, 0, 0]])
+
+        self.assertTrue(A.is_echelon())
+        self.assertTrue(B.is_echelon())
+        self.assertTrue(C.is_echelon())
+        self.assertTrue(D.is_echelon())
+        self.assertTrue(E.is_echelon())
+
+    def test_determinant(self):
+        A = Matrix([[1, 1028931, 123], [0, 0, 0], [-2, 1, 3]])
+        B = Matrix([[-13]]) # B = Matrix([-13]) should not exist, edit code and test it
+        C = Matrix([[4, 3], [2, 1]])
+        D = Matrix([[1, 4, 1], [2, 2, -1], [3, 0, 1]])
+
+        self.assertTrue(A.determinant() == 0)
+        self.assertTrue(B.determinant() == -13)
+        self.assertTrue(C.determinant() == -2)
+        self.assertTrue(D.determinant() == -24)
+
+        # > **Corolário:** Seja A uma matriz n x n. Se A possui duas linhas iguais, então det(A) = 0.
+        E = Matrix([[1, 1028931, 123], [1, 1028931, 123], [-2, 1, 3]])
+        self.assertTrue(E.determinant() == 0)
+
+        # Se B = XA (X real), entao det(B) = X det(A)
+        F = Matrix([[1, 10], [-15, 20]])
+        G = Matrix([[23*1, 23*10], [-15, 20]])
+        self.assertTrue(G.determinant() == 23 * F.determinant())
+        # Se B resulta de A pela troca da posiçao de duas linhas, ent det(B) = -det(A)
+        H = Matrix([[-15, 20], [1, 10]])
+        self.assertTrue(H.determinant() == - F.determinant())
+        # Se B é obtida de A substituindo-se a linha i por ela somada a um multiplo escalar de uma linha k diferente de i, entao det(B) = det(A)
+        J = Matrix([[1+(-15)*9, 10+(20)*9], [-15, 20]])
+        self.assertTrue(F.determinant() == J.determinant())
+
+        # O determinante do produto A por B é igual ao produto dos seus determinantes
+        self.assertTrue((C*F).determinant() == C.determinant() * F.determinant())
+
+        # Os determinantes de A e de sua transposta A^t sao iguais
+        self.assertTrue(A.determinant() == A.transpose().determinant())
+
+        # test: (IBADE 2018) Considere as matrizes A e B, quadradas de ordem 2, com detA = 10 e detB = 2. Então o valor de det[(4.A).(3.B)] é igual: 2ˆ6*3^2*5
+
 if __name__ == '__main__':
     unittest.main()
