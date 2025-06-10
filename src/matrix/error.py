@@ -10,6 +10,12 @@ class InvalidDimensionsForMultiplyingColumnsException(Exception):
     def __init__(self):
         super().__init__("Invalid dimensions for multiplying columns")
 
+# better naming
+# create a class invalid dimensions?
+class InvalidDimensionsForDeterminantFind(Exception):
+    def __init__(self):
+        super().__init__("Invalid dimensions for determinant calculation")
+
 class InvalidTypeException(Exception):
     def __init__(self):
         super().__init__("Invalid type")

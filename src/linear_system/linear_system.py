@@ -1,5 +1,5 @@
 from matrix import Matrix
-from error import InvalidTypeException, DivergeColumnsSizeException
+from linear_system.error import InvalidTypeException, DivergeColumnsSizeException
 import string
 
 class LinearSystem:
@@ -42,19 +42,24 @@ class LinearSystem:
         if self.equations.get_shape()[0] != self.solutions.get_shape()[0]:
             raise DivergeColumnsSizeException()
 
+    def switch_lines(self, i, j):
+        self.equations.value[i], self.equations.value[j] = self.equations.value[j], self.equations.value[i]
+        self.solutions.value[i], self.solutions.value[j] = self.solutions.value[j], self.solutions.value[i]
+
+    def multiply_line_by_scalar(self, i, alpha):
+        self.equations.value[i] = [alpha.value * x for x in self.equations.value[i]]
+        self.solutions.value[i] = [alpha.value * x for x in self.solutions.value[i]]
+
+    def sum_line_by_scalar_multiple(self, i, alpha, j):
+        self.equations.value[i] = [x + alpha.value * y for x, y in zip(self.equations.value[i], self.equations.value[j])]
+        self.solutions.value[i][0] += alpha.value * self.solutions.value[j][0]
+
     def gauss_jordan_method(self):
         def sort_rows_by_pivot_and_apply_to(A, B):
-            indexed_pivots = []
-            for idx, row in enumerate(A):
-                for i, val in enumerate(row):
-                    if val != 0:
-                        indexed_pivots.append((i, idx))
-                        break
-                else:
-                    indexed_pivots.append((float('inf'), idx))  # linha nula vai para o fim
+            indexed_pivots = Matrix(A).get_indexed_pivots_by_row()
 
             # Ordena pelos índices dos pivôs
-            indexed_pivots.sort()
+            indexed_pivots = sorted(indexed_pivots)
             order = [idx for _, idx in indexed_pivots]
 
             # Reordena self (A) e other (B)
@@ -67,18 +72,12 @@ class LinearSystem:
         B = self.solutions.value
 
         for i in range(len(A)):
-
-            A, B = sort_rows_by_pivot_and_apply_to(A, B)
-
             rowA = A[i]
-            pivot = rowA[i]
+            pivot_index = Matrix(A).get_pivot_idx(i)
 
-            k = i + 1
-            while pivot == 0 and k + 1 < len(rowA):
-                pivot = rowA[k]
-                k += 1
-            
-            if pivot == 0: continue
+            if pivot_index == float('inf'): continue
+
+            pivot = rowA[pivot_index]
 
             A[i] = rowA = [elem / pivot for elem in rowA]
             B[i][0] = B[i][0] / pivot
@@ -86,26 +85,11 @@ class LinearSystem:
             for j in range(len(A)):
                 if j == i: continue
 
-                factor = A[j][i]
+                factor = A[j][pivot_index]
                 rowB = A[j]
                 A[j] = [b - factor * a for a, b in zip(rowA, rowB)]
                 B[j][0] = B[j][0] - factor * B[i][0]
 
         A, B = sort_rows_by_pivot_and_apply_to(A, B)
-
+        
         return LinearSystem(A, B)
-
-if __name__ == "__main__":
-    L1 = LinearSystem([[1, 2], [3, -7]], [[5], [6]])
-
-    assert(L1.equations == Matrix([[1, 2], [3, -7]]))
-    assert(L1.solutions == Matrix([[5], [6]]))
-    assert(L1.variables == Matrix([["a"], ["b"]]))
-
-    L2 = LinearSystem([[1, 1, 1], [2, 1, 4], [2, 3, 5]], [[1000], [2000], [2500]])
-    L3 = LinearSystem([[1, 0, 0], [0, 1, 0], [0, 0, 1]], [[700], [200], [100]])
-    assert(L2.gauss_jordan_method() == L3)
-
-    L4 = LinearSystem([[0, 0, 3, -9], [5, 15, -10, 40], [1, 3, -1, 5]], [[6], [-45], [-7]])
-    L5 = LinearSystem([[1, 3, 0, 2], [0, 0, 1, -3], [0, 0, 0, 0]], [[-5], [2], [0]])
-    assert(L4.gauss_jordan_method() == L5)
